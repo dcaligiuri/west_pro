@@ -6,9 +6,23 @@
 <link href="styles.css" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
+
+<div class="container">
+  <div class="row">
+	<div class="col-sm-1 text-center"></div>
+	<div class="col-sm-10 text-center">
+		<br><br><br>
+		<button type="button" class="btn btn-default" id="twitter" >Twitter</button>
+		<button type="button" class="btn btn-default" id="instagram" >Instagram</button>
+		<button type="button" class="btn btn-default" id="manual" >Manual</button>
+		<br><br><br>
+	</div>
+  </div>
+</div>
+
 <div class="container">
   <div class="row" id="my_text">
-    
+		
   </div>
 
 </div>
@@ -895,10 +909,18 @@ var posts = {"items":
 function linkify(text) {
     var urlRegex =/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     return text.replace(urlRegex, function(url) {
-        return '<a href="' + url + '">' + url + '</a>';
+        return '<a class="links" href="' + url + '">' + url + '</a>';
     });
 }
 
+function createImage(src,title) {
+    title = title.replace(/"/g,"&quot;");
+    return '<img src="'+src+'" title="'+title+'" alt="'+title+'" class="img-responsive"/>';
+}
+
+function createLink(href,linkText) {
+    return '<a href="'+href+'" class="links" >'+linkText+'</a>';
+}
 
 
 for (var i = 0; i < posts.items.length; i++) {
@@ -908,6 +930,7 @@ for (var i = 0; i < posts.items.length; i++) {
 		tweetWithSpan = linkify(tweetWithSpan);
          $( "#my_text" ).append( 
          '<div class="col-sm-4 text-center">' +
+			"<br>" + 
 		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
             tweetWithSpan
         + '</div>'
@@ -918,24 +941,30 @@ for (var i = 0; i < posts.items.length; i++) {
         var captionWithSpan = tweet.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
 		captionWithSpan = linkify(captionWithSpan);
          $( "#my_text" ).append( 
-         '<div class="col-sm-4">' +
-		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
+         '<div class="col-sm-4">' + "<br>" + createImage(posts.items[i]["item_data"]["image"]["large"] , "No Image") + "<br>"
++		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
 			captionWithSpan +
          '</div>'
             );
 	
     }
 	
-	
     
       if (posts.items[i]["service_name"] === "Manual"){
-	  
+		
 		
          $( "#my_text" ).append( 
-         '<div class="col-sm-4">' +
-		    posts.items[i]["item_data"]["text"] +"<br>" + "<br>" +
-				posts.items[i]["item_data"]["link_text"].link(posts.items[i]["item_data"]["link"]) +"<br>" + "<br>" +
+         '<div class="col-sm-4">' + "<br>" + 
+			createImage(posts.items[i]["item_data"]["image_url"], "No Image") + "<br>" +
+		    posts.items[i]["item_data"]["text"] +"<br>" + "<br>" + 
+			createLink(posts.items[i]["item_data"]["link"], posts.items[i]["item_data"]["link_text"] )
+			+ "<br>" + "<br>" + 
+
 		 "</div>");
+		 
+
+		 
+ 
  
 			
       }
@@ -945,7 +974,78 @@ for (var i = 0; i < posts.items.length; i++) {
  
 }
 
+$('#instagram').on('click', function(event) {
 
+	$("#my_text").empty();
+	for (var i = 0; i < posts.items.length; i++) {
+   
+    if (posts.items[i]["service_name"] === "Instagram"){
+		var caption = posts.items[i]["item_data"]["caption"] +"<br>" + "<br>";
+        var captionWithSpan = tweet.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
+		captionWithSpan = linkify(captionWithSpan);
+         $( "#my_text" ).append( 
+         '<div class="col-sm-4">' + "<br>" + createImage(posts.items[i]["item_data"]["image"]["large"] , "No Image") + "<br>"
++		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
+			captionWithSpan +
+         '</div>'
+            );
+	
+    }
+	
+	 
+            
+ 
+}
+});
+
+
+$('#twitter').on('click', function(event) {
+	$("#my_text").empty();
+	for (var i = 0; i < posts.items.length; i++) {
+    if (posts.items[i]["service_name"] === "Twitter"){
+        var tweet = posts.items[i]["item_data"]["tweet"] +"<br>" + "<br>";
+        var tweetWithSpan = tweet.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
+		tweetWithSpan = linkify(tweetWithSpan);
+         $( "#my_text" ).append( 
+         '<div class="col-sm-4 text-center">' +
+			"<br>" + 
+		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
+            tweetWithSpan
+        + '</div>'
+            );
+    }
+	}
+});
+
+
+$('#manual').on('click', function(event) {
+	$("#my_text").empty();
+	for (var i = 0; i < posts.items.length; i++) {
+
+      if (posts.items[i]["service_name"] === "Manual"){
+		
+		
+         $( "#my_text" ).append( 
+         '<div class="col-sm-4">' + "<br>" + 
+			createImage(posts.items[i]["item_data"]["image_url"], "No Image") + "<br>" +
+		    posts.items[i]["item_data"]["text"] +"<br>" + "<br>" + 
+			createLink(posts.items[i]["item_data"]["link"], posts.items[i]["item_data"]["link_text"] )
+			+ "<br>" + "<br>" + 
+
+		 "</div>");
+		 
+
+		 
+ 
+ 
+			
+      }
+	  
+	     
+            
+ 
+}
+});
 
 
 
