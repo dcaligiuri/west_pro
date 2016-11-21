@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="http://designers.hubspot.com/hs-fs/hub/327485/file-2054199286-css/font-awesome.css" rel="stylesheet">
 
+</head> 
+
+
 <div class="container">
   <div class="row">
 	<div class="col-sm-1 text-center"></div>
@@ -22,12 +25,9 @@
 
 <div class="container">
   <div class="row" id="my_text">
-		
+  
   </div>
-
 </div>
-
-
 
 
 <script>
@@ -3512,17 +3512,16 @@ var posts = {"items":
 }
 ]};
 
-
 posts.items = posts.items.sort(function(a,b){
   timeDateString2 = b.item_published;
   timeDateString = a.item_published; 
-  arr2 = timeDateString2.split(" ");
-  arr = timeDateString.split(" ");
-  la2 = arr2[0].split("-");
-  ya2 = arr2[1].split(":");
-  la = arr[0].split("-");
-  ya = arr[1].split(":");
-  return new Date(la2[0], la2[1] - 1 , la2[2], ya2[0], ya2[1], ya2[2]) - new Date(la[0], la[1] - 1 , la[2], ya[0], ya[1], ya[2]);
+  timeDateArr2 = timeDateString2.split(" ");
+  timeDateArr = timeDateString.split(" ");
+  date2 = timeDateArr2[0].split("-");
+  time2 = timeDateArr2[1].split(":");
+  date = timeDateArr[0].split("-");
+  time = timeDateArr[1].split(":");
+  return new Date(date2[0], date2[1] - 1 , date2[2], time2[0], time2[1], time2[2]) - new Date(date[0], date[1] - 1 , date[2], time[0], time[1], time[2]);
 });
 
 
@@ -3542,95 +3541,79 @@ function createLink(href,linkText) {
     return '<a href="'+href+'" class="links" >'+linkText+'</a>';
 }
 
-for (var i = 0; i < 20; i++) {
-    if (posts.items[i]["service_name"] === "Twitter"){
-        var tweet = posts.items[i]["item_data"]["tweet"] +"<br>" + "<br>";
+
+function displayTwitterPosts(my_post){
+	  var tweet = my_post["item_data"]["tweet"] +"<br>" + "<br>";
         var tweetWithSpan = tweet.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
 		tweetWithSpan = linkify(tweetWithSpan);
          $( "#my_text" ).append( 
          '<div class="col-sm-4">' + '<i class="fa fa-twitter fa-2x" aria-hidden="true"></i>' +
 			"<br>" + 
 			'<div class="text-center"> ' +
-		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
-            tweetWithSpan +
+		    my_post["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
+            tweetWithSpan + 
 			'</div>'
         + '</div>'
             );
-    }
-    if (posts.items[i]["service_name"] === "Instagram"){
-		var caption = posts.items[i]["item_data"]["caption"] +"<br>" + "<br>";
-        var captionWithSpan = caption.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
-		captionWithSpan = linkify(captionWithSpan);
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<i class="fa fa-instagram fa-2x" aria-hidden="true"></i>' + "<br>" + createImage(posts.items[i]["item_data"]["image"]["large"] , "No Image") + "<br>"
-+		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
+}
+
+function displayInstagramPosts(my_post){
+	var caption = my_post["item_data"]["caption"] +"<br>" + "<br>";
+    var captionWithSpan = caption.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
+	captionWithSpan = linkify(captionWithSpan);
+    $( "#my_text" ).append( 
+		'<div class="col-sm-4">' + '<i class="fa fa-instagram fa-2x" aria-hidden="true"></i>' + "<br>" + createImage(my_post["item_data"]["image"]["large"] , "No Image") + "<br>"
++		    my_post["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
 			captionWithSpan +
          '</div>'
             );
-	
-    }
-	
-    
-      if (posts.items[i]["service_name"] === "Manual"){
-		
-		
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<b id="manual-corner-pic">AFF</b>' + "<br>" + "<br>" +
-			createImage(posts.items[i]["item_data"]["image_url"], "No Image") + "<br>" +
-		    posts.items[i]["item_data"]["text"] +"<br>" + "<br>" + 
-			createLink(posts.items[i]["item_data"]["link"], posts.items[i]["item_data"]["link_text"] )
-			+ "<br>" + "<br>" + 
 
-		 "</div>");
-		 
-
-      }
-	  
-	     
-		currentPositionFeed = i; 
 }
 
+function displayManualPosts(my_post){
+    $( "#my_text" ).append( 
+		'<div class="col-sm-4">' + '<b id="manual-corner-pic">AFF</b>' + "<br>" + "<br>" +
+		createImage(my_post["item_data"]["image_url"], "No Image") + "<br>" +
+		my_post["item_data"]["text"] +"<br>" + "<br>" + 
+		createLink(my_post["item_data"]["link"], my_post["item_data"]["link_text"] )
+		+ "<br>" + "<br>" + 
+		"</div>");
+}
+
+function displayAllPosts(my_post){
+	if (my_post["service_name"] === "Twitter"){
+      displayTwitterPosts(my_post);
+    }
+    if (my_post["service_name"] === "Instagram"){
+		displayInstagramPosts(my_post);
+    }
+	if (my_post["service_name"] === "Manual"){
+		displayManualPosts(my_post);
+	}
+}
+
+for (var i = 0; i < 20; i++) {
+    displayAllPosts(posts.items[i]);
+}
+
+currentPositionFeed = i; 
 
 
 $('#instagram').on('click', function(event) {
-
 	$("#my_text").empty();
 	for (var i = 0; i < posts.items.length; i++) {
-   
-    if (posts.items[i]["service_name"] === "Instagram"){
-		var caption = posts.items[i]["item_data"]["caption"] +"<br>" + "<br>";
-        var captionWithSpan = caption.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
-		captionWithSpan = linkify(captionWithSpan);
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<i class="fa fa-instagram fa-2x" aria-hidden="true"></i>' + "<br>" + createImage(posts.items[i]["item_data"]["image"]["large"] , "No Image") + "<br>"
-+		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
-			captionWithSpan +
-         '</div>'
-            );
-	
-    }
-	
-}
+		if (posts.items[i]["service_name"] === "Instagram"){
+			displayInstagramPosts(posts.items[i]);
+		}
+	}
 });
-
 
 $('#twitter').on('click', function(event) {
 	$("#my_text").empty();
 	for (var i = 0; i < posts.items.length; i++) {
-    if (posts.items[i]["service_name"] === "Twitter"){
-        var tweet = posts.items[i]["item_data"]["tweet"] +"<br>" + "<br>";
-        var tweetWithSpan = tweet.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
-		tweetWithSpan = linkify(tweetWithSpan);
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<i class="fa fa-twitter fa-2x" aria-hidden="true"></i>' +
-			"<br>" + 
-			'<div class="text-center"> ' +
-		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
-            tweetWithSpan +
-			'</div>'
-        + '</div>'
-            );
-    }
+		if (posts.items[i]["service_name"] === "Twitter"){
+			displayTwitterPosts(posts.items[i]);
+		}
 	}
 });
 
@@ -3639,85 +3622,26 @@ $('#twitter').on('click', function(event) {
 $('#manual').on('click', function(event) {
 	$("#my_text").empty();
 	for (var i = 0; i < posts.items.length; i++) {
-
-      if (posts.items[i]["service_name"] === "Manual"){
-		
-		
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<b id="manual-corner-pic">AFF</b>' + "<br>" + "<br>" +
-			createImage(posts.items[i]["item_data"]["image_url"], "No Image") + "<br>" +
-		    posts.items[i]["item_data"]["text"] +"<br>" + "<br>" + 
-			createLink(posts.items[i]["item_data"]["link"], posts.items[i]["item_data"]["link_text"] )
-			+ "<br>" + "<br>" + 
-
-		 "</div>");
-		 
-
-			
+		if (posts.items[i]["service_name"] === "Manual"){
+			displayManualPosts(posts.items[i]);
       }
-	  
-	   
-}
+	}
 });
 
 
 
 </script>
-<button type="button" class="btn btn-default" id="load-more" >Load More</button>
-</head>
+<button type="button" class="btn btn-default center-block" id="load-more" >Load More</button>
 
 
 <script> 
 
 
 $('#load-more').on('click', function(event) {
-for (var i = currentPositionFeed + 1 ; i < 20 + currentPositionFeed; i++){
-	if (posts.items[i]["service_name"] === "Twitter"){
-        var tweet = posts.items[i]["item_data"]["tweet"] +"<br>" + "<br>";
-        var tweetWithSpan = tweet.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
-		tweetWithSpan = linkify(tweetWithSpan);
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<i class="fa fa-twitter fa-2x" aria-hidden="true"></i>' +
-			"<br>" + 
-			'<div class="text-center"> ' +
-		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
-            tweetWithSpan +
-			'</div>'
-        + '</div>'
-            );
-    }
-    if (posts.items[i]["service_name"] === "Instagram"){
-		var caption = posts.items[i]["item_data"]["caption"] +"<br>" + "<br>";
-        var captionWithSpan = caption.replace(/(^|\s)([#@][a-z\d-]+)/ig, '$1<span>$2</span>');
-		captionWithSpan = linkify(captionWithSpan);
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<i class="fa fa-instagram fa-2x" aria-hidden="true"></i>' + "<br>" + createImage(posts.items[i]["item_data"]["image"]["large"] , "No Image") + "<br>"
-+		    posts.items[i]["item_data"]["user"]["username"].bold() +"<br>" + "<br>" + 
-			captionWithSpan +
-         '</div>'
-            );
-	
-    }
-	
-    
-      if (posts.items[i]["service_name"] === "Manual"){
-		
-		
-         $( "#my_text" ).append( 
-         '<div class="col-sm-4">' + '<b id="manual-corner-pic">AFF</b>' + "<br>" + "<br>" +
-			createImage(posts.items[i]["item_data"]["image_url"], "No Image") + "<br>" +
-		    posts.items[i]["item_data"]["text"] +"<br>" + "<br>" + 
-			createLink(posts.items[i]["item_data"]["link"], posts.items[i]["item_data"]["link_text"] )
-			+ "<br>" + "<br>" + 
-
-		 "</div>");
-		 
-
-      }
-	  
-	    		} 
-		currentPositionFeed = i; 
-
+	for (var i = currentPositionFeed + 1 ; i < 20 + currentPositionFeed; i++){
+		 displayAllPosts(posts.items[i]);
+	} 
+	currentPositionFeed = i; 
 });
 
 
