@@ -3510,7 +3510,29 @@ var posts = {"items":
     "category_slug": null,
     "category_name": null
 }
-]};
+]}
+
+
+
+var instagramPosts = {"items" : [] };
+var twitterPosts = {"items" : []};
+var manualPosts = {"items" : []};
+
+	for (var i = 0; i < posts.items.length; i++){
+		if (posts.items[i]["service_name"] == "Instagram"){
+			instagramPosts.items.push(posts.items[i]);
+		}
+		else if (posts.items[i]["service_name"] == "Twitter"){
+			twitterPosts.items.push(posts.items[i]);
+		}
+		else if (posts.items[i]["service_name"] == "Manual"){
+			manualPosts.items.push(posts.items[i]);
+		}
+	}
+
+showTwitter = true;
+showInstagram = true;
+showManual = true; 
 
 posts.items = posts.items.sort(function(a,b){
   timeDateString2 = b.item_published;
@@ -3523,29 +3545,6 @@ posts.items = posts.items.sort(function(a,b){
   time = timeDateArr[1].split(":");
   return new Date(date2[0], date2[1] - 1 , date2[2], time2[0], time2[1], time2[2]) - new Date(date[0], date[1] - 1 , date[2], time[0], time[1], time[2]);
 });
-
-
-onlyInstagram = {"items" : []};
-onlyTwitter = {"items" : []};
-onlyManual = {"items" : []};
-
-
-for (var i = 0; i < posts.items.length; i++){
-	if (posts.items[i].service_name == "Instagram"){
-		onlyInstagram.items.push(posts.items[i]);
-	}
-	else if (posts.items[i].service_name == "Twitter"){
-		onlyTwitter.items.push(posts.items[i]);
-	}
-	else if (posts.items[i].service_name == "Manual"){
-		onlyManual.items.push(posts.items[i]);
-	}
-}
-
-
-showInstagram = true; 
-showTwitter = true; 
-showManual = true; 
 
 
 function linkify(text) {
@@ -3615,44 +3614,48 @@ function displayAllPosts(my_post){
 	}
 }
 
-
-
 for (var i = 0; i < 20; i++) {
     displayAllPosts(posts.items[i]);
 }
 
+currentPositionFeed = i; 
 
 
 $('#instagram').on('click', function(event) {
-	$("#my_text").empty();
 	showInstagram = true;
-	showTwitter = false;
-	showManual = false; 
+	showManual = false;
+	showTwitter = false; 
+	$("#my_text").empty();
 	for (var i = 0; i < 20; i++) {
-		displayInstagramPosts(onlyInstagram.items[i]);
+		displayInstagramPosts(instagramPosts.items[i]);
 	}
+	currentPositionFeed = i; 
 });
 
 $('#twitter').on('click', function(event) {
-	$("#my_text").empty();
-	showTwitter = true;
-	showManual = false;
+	showTwitter = true; 
 	showInstagram = false; 
+	showManual = false; 
+	$("#my_text").empty();
 	for (var i = 0; i < 20; i++) {
-		displayTwitterPosts(onlyTwitter.items[i]);
+		displayTwitterPosts(twitterPosts.items[i]);
 	}
+	currentPositionFeed = i; 
 });
+
 
 
 $('#manual').on('click', function(event) {
-	showManual = true;
-	showTwitter = false;
-	showInstagram = false;
+	showInstagram = false; 
+	showManual = true; 
+	showTwitter = false; 
 	$("#my_text").empty();
 	for (var i = 0; i < 20; i++) {
-		displayManualPosts(onlyManual.items[i]);
+		displayManualPosts(manualPosts.items[i]);
 	}
+	currentPositionFeed = i; 
 });
+
 
 
 </script>
@@ -3663,38 +3666,16 @@ $('#manual').on('click', function(event) {
 
 
 $('#load-more').on('click', function(event) {
-	if (showInstagram == true && showTwitter == true && showManual === true){
-		for (var i = 0 ; i < posts.items.length; i++){
+	for (var i = currentPositionFeed + 1 ; i < 20 + currentPositionFeed; i++){
 			displayAllPosts(posts.items[i]);
-		} 
+	} 
+		currentPositionFeed = i; 
 	}
-	else if (showTwitter == true && showInstagram == false && showManual == false){
-		var numTwitterPosts = $('.col-sm-4').length
-		for (var i = numTwitterPosts; i < numTwitterPosts + 20; i++) {
-			if (i < onlyTwitter.items.length){
-				displayTwitterPosts(onlyTwitter.items[i]);
-			}
-		}
-	}
-	else if (showInstagram == true && showTwitter == false && showManual == false){
-		var numInstagramPosts = $('.col-sm-4').length
-		for (var i = numInstagramPosts; i < numInstagramPosts + 20; i++) {
-			if (i < onlyInstagram.items.length){
-				displayInstagramPosts(onlyInstagram.items[i]);
-			}
-		}
-	}
-	else if (showManual == true && showTwitter == false && showInstagram == false ){
-		var numManualPosts = $('.col-sm-4').length
-		for (var i = numManualPosts; i < numManualPosts + 20; i++) {
-			if (i < onlyManual.items.length){
-				displayManualPosts(onlyManual.items[i]);
-			}
-		}
-	}
-	
-	
+
 });
+
+
+
 
 
 </script> 
